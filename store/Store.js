@@ -13,3 +13,5 @@ Store.prototype.checkRequestCount = function(key, onSucceed, onFailed){
 Store.prototype.addRequest = function(request, onSucceed, onFailed){
     onFailed({message: "override this function"});
 };
+
+module.exports = Store;

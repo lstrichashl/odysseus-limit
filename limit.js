@@ -1,3 +1,5 @@
+var TooManyRequestsError = require('./errors/TooManyRequestsError');
+
 function middleware(req, res, next){
     var that = this,
         key = that.key(req),
