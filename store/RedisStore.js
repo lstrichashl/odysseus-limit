@@ -29,11 +29,21 @@ util.inherits(RedisStore, require('./Store'));
 
 RedisStore.prototype.checkRequestCount = function(key, onSucceed, onFailed){
     var that = this;
-    this.client.send_command('KEYS', [key+'*'], function(err, res){
-        if(!err){
-            onSucceed(res.length);
+    var now = Date.now();
+    that.client.send_command('ZREMRANGEBYSCORE', [key, '-inf', now], function(err, res){
+        if(!err) {
+            that.client.send_command('ZCARD', [key], function (err, res) {
+                if (!err) {
+                    onSucceed(res);
+                }
+                else{
+                    err.key = key;
+                    that.emit('error', err);
+                    onFailed(err);
+                }
+            });
         }
-        else{
+        else {
             err.key = key;
             that.emit('error', err);
             onFailed(err);
@@ -43,7 +53,8 @@ RedisStore.prototype.checkRequestCount = function(key, onSucceed, onFailed){
 
 RedisStore.prototype.addRequest = function(request, onSucceed, onFailed){
     var that = this;
-    that.client.send_command('SETX', [request.key, request.expire, ''], function(err, res){
+    var now = Date.now();
+    that.client.send_command('ZADD', [request.key, now + request.interval, now], function(err, res){
         if(!err){
             that.emit('request', request);
             onSucceed(res);

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -24,5 +24,12 @@
   "homepage": "https://github.com/lstrichashl/odysseus-limit#readme",
   "dependencies": {
     "redis": "^2.6.5"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "express": "^4.14.0",
+    "mocha": "^3.2.0",
+    "request": "^2.79.0",
+    "sinon": "^1.17.7"
   }
 }

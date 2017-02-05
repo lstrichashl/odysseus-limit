@@ -9,13 +9,15 @@ function middleware(req, res, next){
     that.store.checkRequestCount(key,
         function(requestCount){
             if(amount > requestCount){
-                that.store.addRequest({amount: amount, interval: interval},
-                    next, next)
+                that.store.addRequest({key: key, interval: interval},
+                    function(){
+                        next();
+                    }, next);
             }
             else {
                 var error = new TooManyRequestsError(key);
-                that.emit('TooManyRequests', key, amount, requestCount);
-                res.status(4290).json(error);
+                that.store.emit('TooManyRequests', key, amount, requestCount);
+                res.status(429).json(error);
             }
         }, next)
 }
