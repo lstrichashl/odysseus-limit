@@ -54,7 +54,7 @@ RedisStore.prototype.checkRequestCount = function(key, onSucceed, onFailed){
 RedisStore.prototype.addRequest = function(request, onSucceed, onFailed){
     var that = this;
     var now = Date.now();
-    that.client.send_command('ZADD', [request.key, now + request.interval, now], function(err, res){
+    that.client.send_command('ZADD', [request.key, now + request.ttl, now], function(err, res){
         if(!err){
             that.emit('request', request);
             onSucceed(res);

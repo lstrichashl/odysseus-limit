@@ -1,8 +1,8 @@
 var TooManyRequestsError = function(key, error){
-    Error.call(this, message);
+    this.message = "Too many requests in this time frame";
+    Error.call(this, this.message);
     Error.captureStackTrace(this, this.constructor);
     this.name = 'TooManyRequests';
-    this.message = "Too many requests in this time frame";
     if(error) this.inner = error;
 };
 

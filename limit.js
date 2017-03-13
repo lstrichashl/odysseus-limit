@@ -4,12 +4,12 @@ function middleware(req, res, next){
     var that = this,
         key = that.key(req),
         amount = that.amount(req),
-        interval = that.interval(req);
+        ttl = that.ttl(req);
 
     that.store.checkRequestCount(key,
         function(requestCount){
             if(amount > requestCount){
-                that.store.addRequest({key: key, interval: interval},
+                that.store.addRequest({key: key, ttl: ttl},
                     function(){
                         next();
                     }, next);
@@ -33,8 +33,8 @@ module.exports = function(options){
             return 2;
         }
     }
-    if(!options.interval){
-        options.interval = function(req){
+    if(!options.ttl){
+        options.ttl = function(req){
             return 5;
         }
     }

@@ -23,7 +23,7 @@ describe('limit', function(){
             amount: function(req){
                 return 0;
             },
-            interval: function (req) {
+            ttl: function (req) {
                 return 1000000;
             }
         };

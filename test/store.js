@@ -68,10 +68,3 @@ describe('store', function(){
         });
     });
 });
-
-function checkRequestCount(store, key, count, done) {
-    store.checkRequestCount(key, function (c) {
-        c.should.equal(count);
-        done();
-    }, done);
-}
