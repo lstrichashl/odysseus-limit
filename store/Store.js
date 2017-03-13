@@ -6,7 +6,7 @@ function Store(){
 
 util.inherits(Store, require('events').EventEmitter);
 
-Store.prototype.checkRequestCount = function(key, onSucceed, onFailed){
+Store.prototype.getRequestCount = function(key, onSucceed, onFailed){
     onFailed({message: "override this function"});
 };
 

@@ -53,14 +53,14 @@ describe('store', function(){
     });
     describe('request count', function(){
         it('should return 0 requests', function(done){
-            store.checkRequestCount('store.consistent.0', function (count) {
+            store.getRequestCount('store.consistent.0', function (count) {
                 count.should.equal(0);
                 done();
             }, done);
         });
         it('should return 1 request', function(done){
             store.addRequest({key: 'store.consistent.1', ttl: 1000000}, function () {
-                store.checkRequestCount('store.consistent.1', function (count) {
+                store.getRequestCount('store.consistent.1', function (count) {
                     count.should.equal(1);
                     done();
                 }, done);

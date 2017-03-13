@@ -6,7 +6,7 @@ function middleware(req, res, next){
         amount = that.amount(req),
         ttl = that.ttl(req);
 
-    that.store.checkRequestCount(key,
+    that.store.getRequestCount(key,
         function(requestCount){
             if(amount > requestCount){
                 that.store.addRequest({key: key, ttl: ttl},

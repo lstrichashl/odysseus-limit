@@ -27,7 +27,7 @@ function RedisStore(connection){
 
 util.inherits(RedisStore, require('./Store'));
 
-RedisStore.prototype.checkRequestCount = function(key, onSucceed, onFailed){
+RedisStore.prototype.getRequestCount = function(key, onSucceed, onFailed){
     var that = this;
     var now = Date.now();
     that.client.send_command('ZREMRANGEBYSCORE', [key, '-inf', now], function(err, res){
