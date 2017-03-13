@@ -1,0 +1,9 @@
+language: node_js
+sudo: false
+before_install:
+  - "test ! -d node_modules || npm prune"
+  - "test ! -d node_modules || npm rebuild"
+script:
+  - npm test
+node_js:
+  - 6.9
