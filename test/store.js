@@ -1,6 +1,6 @@
 'use strict';
 var OdysseusLimiter = require('../index');
-var redis = require('redis');
+var redis = require('redis-mock');
 var chai = require('chai');
 
 chai.should();
@@ -9,11 +9,12 @@ var assert = chai.assert;
 describe('store', function(){
     var store, app, redis_client;
     before(function () {
-        redis_client = redis.createClient({host: 'localhost', port: 6379});
+        redis_client = redis.createClient();
         store = new OdysseusLimiter.RedisStore({
             host: 'localhost',
             port: 6379
         });
+        store.client = redis_client;
     });
     beforeEach(function () {
         redis_client.send_command('flushall', function (err, res) {
