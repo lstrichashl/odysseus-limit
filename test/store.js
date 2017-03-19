@@ -9,24 +9,24 @@ var assert = chai.assert;
 describe('store', function(){
     var store, app, redis_client;
     before(function () {
-        redis_client = redis.createClient();
         store = new OdysseusLimiter.RedisStore({
             host: 'localhost',
             port: 6379
         });
-        store.client = redis_client;
     });
     beforeEach(function () {
+        redis_client = redis.createClient();
         redis_client.send_command('flushall', function (err, res) {
             if(err) throw err;
         })
+        store.client = redis_client;
     });
     describe('events', function(){
         it('should inherit from Store', function(){
             assert.instanceOf(store, OdysseusLimiter.Store);
             assert.instanceOf(store, require('events').EventEmitter);
         });
-        it('should emit connect when connected', function(done){
+        it('should emit ready when connected', function(done){
             var mystore = new OdysseusLimiter.RedisStore({
                 host: 'localhost',
                 port: 6379
