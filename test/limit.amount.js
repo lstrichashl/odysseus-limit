@@ -1,17 +1,18 @@
 var express = require('express');
 var  request = require('supertest');
-var redis = require('redis');
+var redis = require('redis-mock');
 var OdysseusLimiter = require('../index');
 
 describe('limit', function(){
     var store, app;
     var options, redis_client;
     before(function(){
-        redis_client = redis.createClient({host: 'localhost', port: 6379});
+        redis_client = redis.createClient();
         store = new OdysseusLimiter.RedisStore({
             host: 'localhost',
             port: 6379
         });
+        store.client = redis_client;
     });
     beforeEach(function(){
         app = express();
@@ -27,7 +28,7 @@ describe('limit', function(){
                 return 1000000;
             }
         };
-        redis_client.send_command('flushall', function (err, res) {
+        redis_client.flushall(function (err, res) {
             if(err) throw err;
         })
     });
@@ -45,8 +46,7 @@ describe('limit', function(){
             });
             it('should block after 1 requests', function(done){
                 var calls = 0;
-                options.
-                    amount = function (req) {
+                options.amount = function (req) {
                         return 1;
                     };
                 app.use(OdysseusLimiter.limit(options));
