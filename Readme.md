@@ -1,4 +1,8 @@
 # Odysseus Limiter
+
+  [![NPM Version][npm-image]][npm-url]
+  [![Linux Build][travis-image]][travis-url]
+
 Throttle limiting requests middleware for express apps.
 Backed by redis for maintainable and scalable apps.
 
@@ -24,6 +28,10 @@ $ npm install odysseus-limit
     * addRequest - gets ``key`` and ``ttl``(time to live) in milliseconds. After the ttl expires the request is deleted
     * getRequestCount - gets all requests by key.
 * ``RedisStore`` - implementation of ``Store``. The requests are save in redis. Redis is menaging the ttl issue.
+    * gets options in constructor:
+        * ``host`` - host of redis
+        * ``port`` - port of redis
+        * ``client`` - predefined redis client
 * ``limit`` - An express middleware that limits requests.
     * options
         * ``store`` - instance of ``store``
@@ -73,3 +81,9 @@ npm test
 * Highly scalable.
 * Support limiting multiple routes and services.
 * Open for customisation (store, key, amount and ttl).
+
+
+[npm-image]: https://img.shields.io/npm/v/odysseus-limit.svg
+[npm-url]: https://npmjs.org/package/odysseus-limit
+[travis-image]: https://img.shields.io/travis/lstrichashl/odysseus-limit/master.svg
+[travis-url]: https://travis-ci.org/lstrichashl/odysseus-limit

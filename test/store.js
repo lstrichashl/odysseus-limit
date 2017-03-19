@@ -7,19 +7,10 @@ chai.should();
 var assert = chai.assert;
 
 describe('store', function(){
-    var store, app, redis_client;
-    before(function () {
-        store = new OdysseusLimiter.RedisStore({
-            host: 'localhost',
-            port: 6379
-        });
-    });
+    var store, redis_client;
     beforeEach(function () {
         redis_client = redis.createClient();
-        redis_client.send_command('flushall', function (err, res) {
-            if(err) throw err;
-        })
-        store.client = redis_client;
+        store = new OdysseusLimiter.RedisStore({client:redis_client});
     });
     describe('events', function(){
         it('should inherit from Store', function(){
@@ -27,23 +18,17 @@ describe('store', function(){
             assert.instanceOf(store, require('events').EventEmitter);
         });
         it('should emit ready when connected', function(done){
-            var mystore = new OdysseusLimiter.RedisStore({
-                host: 'localhost',
-                port: 6379
-            });
+            redis_client = redis.createClient();
+            var mystore = new OdysseusLimiter.RedisStore({client:redis_client});
             mystore.once('ready', function (error) {
                 done();
             });
         });
         it('should emit error when there is error', function(done){
-            var mystore = new OdysseusLimiter.RedisStore({
-                host: 'localhost',
-                port: 6379
-            });
-            mystore.once('error', function (error) {
+            store.once('error', function (error) {
                 done();
             });
-            mystore.emit('error', {message: 'error-mock'});
+            store.emit('error', {message: 'error-mock'});
         });
         it('should emit request when new request is entered', function(done){
             store.once('request', function (request) {
