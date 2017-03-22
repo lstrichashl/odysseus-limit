@@ -9,10 +9,8 @@ describe('limit', function(){
     before(function(){
         redis_client = redis.createClient();
         store = new OdysseusLimiter.RedisStore({
-            host: 'localhost',
-            port: 6379
+            client: redis_client
         });
-        store.client = redis_client;
     });
     beforeEach(function(){
         app = express();
