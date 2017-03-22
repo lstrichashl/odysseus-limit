@@ -6,9 +6,15 @@ var OdysseusLimiter = require('../index');
 describe('limit', function(){
     var store, app;
     var options, redis_client;
-    beforeEach(function(){
+    before(function(){
         redis_client = redis.createClient();
-        store = new OdysseusLimiter.RedisStore(redis_client);
+        store = new OdysseusLimiter.RedisStore({
+            host: 'localhost',
+            port: 6379
+        });
+        store.client = redis_client;
+    });
+    beforeEach(function(){
         app = express();
         options = {
             store: store,
