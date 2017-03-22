@@ -2,6 +2,7 @@
 
   [![NPM Version][npm-image]][npm-url]
   [![Linux Build][travis-image]][travis-url]
+  [![Test Coverage][coveralls-image]][coveralls-url]
 
 Throttle limiting requests middleware for express apps.
 Backed by redis for maintainable and scalable apps.
@@ -87,3 +88,5 @@ npm test
 [npm-url]: https://npmjs.org/package/odysseus-limit
 [travis-image]: https://img.shields.io/travis/lstrichashl/odysseus-limit/master.svg
 [travis-url]: https://travis-ci.org/lstrichashl/odysseus-limit
+[coveralls-image]: https://img.shields.io/coveralls/lstrichashl/odysseus-limit/master.svg
+[coveralls-url]: https://coveralls.io/r/lstrichashl/odysseus-limit?branch=master
