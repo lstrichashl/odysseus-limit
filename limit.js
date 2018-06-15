@@ -22,21 +22,65 @@ function middleware(req, res, next){
         }, next)
 }
 
-module.exports = function(options){
-    if(!options.key){
-        options.key = function(req){
-            return req.connection.remoteAddress;
+function constParam(constant){
+    return function(req){
+        return constant;
+    }
+}
+
+function setKey(key){
+    var newkey;
+    if(!key){
+        newkey = constParam("general")
+    }
+    else{
+        if(key === "ip"){
+            newkey = function(req){
+                return req.connection.remoteAddress;
+            }
+        }
+        else if(typeof key === 'string'){
+            newkey = constParam(key);
         }
     }
-    if(!options.amount){
-        options.amount = function(req){
-            return 2;
-        }
+
+    return newkey;
+}
+
+function setField(field){
+    var newField;
+    if(!field){
+        throw new error("should specify amount");
     }
-    if(!options.ttl){
-        options.ttl = function(req){
-            return 5;
-        }
+    else if(typeof field === 'number'){
+        newField = constParam(field);
     }
-    return middleware.bind(options);
+    if(!newField){
+        newField = field;
+    }
+    return newField;
+}
+
+function initParams(options){
+    return
+        Object.assign(
+            {
+                key: setKey(options.key),
+                amount: setField(options.amount),
+                ttl: setField(options.ttl)
+            },
+            options);
+}
+
+module.exports = function(amount, ttl, options){
+    var params = {};
+    if(typeof amount == "object"){
+        params = initParams(amount);
+    }
+    else{
+        options.amount = amount;
+        options.ttl = ttl;
+        params = initParams(options);
+    }
+    return middleware.bind(params);
 };
