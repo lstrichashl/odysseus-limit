@@ -7,7 +7,7 @@ function LocalStore(){
 util.inherits(LocalStore, require('./Store'));
 
 LocalStore.prototype.getRequestCount = function(key, onSucceed, onFailed){
-    onSucceed(this.queues[key].length);
+    onSucceed(this.queues[key] ? this.queues[key].length : 0);
 }
 
 LocalStore.prototype.addRequest = function(request, onSucceed, onFailed){

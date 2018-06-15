@@ -1,16 +1,14 @@
 var express = require('express');
-var  request = require('supertest');
+var request = require('supertest');
 var redis = require('redis-mock');
 var OdysseusLimiter = require('../index');
+var assert = require('assert');
 
 describe('limit', function(){
     var store, app;
-    var options, redis_client;
+    var options;
     before(function(){
-        redis_client = redis.createClient();
-        store = new OdysseusLimiter.RedisStore({
-            client: redis_client
-        });
+        store = new OdysseusLimiter.LocalStore();
     });
     beforeEach(function(){
         app = express();
@@ -26,9 +24,6 @@ describe('limit', function(){
                 return 1000000;
             }
         };
-        redis_client.flushall(function (err, res) {
-            if(err) throw err;
-        })
     });
     describe('.amount', function(){
         describe('change requests amount', function(){
@@ -52,13 +47,42 @@ describe('limit', function(){
                     res.status(200).json({status: 'ok'});
                 });
                 request(app)
-                    .get('/?key=limit.amount.blockafter13')
+                    .get('/?key=limit.amount.blockafter1')
                     .expect(200, function () {
                         request(app)
-                            .get('/?key=limit.amount.blockafter13')
+                            .get('/?key=limit.amount.blockafter1')
                             .expect(429, done);
                     });
             });
         });
+        describe('defaults', function(){
+            it('amount must be specified', function(done){
+                options.amount = undefined;
+                try{
+                    OdysseusLimiter.limit(options);
+                }
+                catch(e){
+                    if(e == "amount must be specified"){
+                        done();
+                    }
+                }
+            });
+        });
     });
 });
+
+function loader(app, key, calls, limit, done) {
+    if(calls < limit){
+        request(app)
+            .get('/?key=' + key)
+            .expect(200, function (error) {
+                if(error) throw error;
+                loader(app, key, calls + 1, limit);
+            });
+    }
+    else{
+        request(app)
+            .get('/?key=' + key)
+            .expect(429, done);
+    }
+}

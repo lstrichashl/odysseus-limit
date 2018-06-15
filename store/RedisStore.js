@@ -38,19 +38,19 @@ RedisStore.prototype.getRequestCount = function(key, onSucceed, onFailed){
         if(!err) {
             that.client.ZCARD([key], function (err, res) {
                 if (!err) {
-                    onSucceed(res);
+                    if(onSucceed) onSucceed(res);
                 }
                 else{
                     err.key = key;
                     that.emit('error', err);
-                    onFailed(err);
+                    if(onFailed) onFailed(err);
                 }
             });
         }
         else {
             err.key = key;
             that.emit('error', err);
-            onFailed(err);
+            if(onFailed) onFailed(err);
         }
     });
 };
@@ -61,11 +61,11 @@ RedisStore.prototype.addRequest = function(request, onSucceed, onFailed){
     that.client.ZADD([request.key, now + request.ttl, now], function(err, res){
         if(!err){
             that.emit('request', request);
-            onSucceed(res);
+            if(onSucceed) onSucceed(res);
         }
         else {
             that.emit('error', err);
-            onFailed(err);
+            if(onFailed) onFailed(err);
         }
     });
 };

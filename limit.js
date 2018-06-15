@@ -50,7 +50,7 @@ function setKey(key){
 function setField(field){
     var newField;
     if(!field){
-        throw new error("should specify amount");
+        throw "amount must be specified";
     }
     else if(typeof field === 'number'){
         newField = constParam(field);
@@ -62,14 +62,13 @@ function setField(field){
 }
 
 function initParams(options){
-    return
-        Object.assign(
-            {
-                key: setKey(options.key),
-                amount: setField(options.amount),
-                ttl: setField(options.ttl)
-            },
-            options);
+    var p = {
+        key: setKey(options.key),
+        amount: setField(options.amount),
+        ttl: setField(options.ttl)
+    };
+    Object.assign(p, options);
+    return p;
 }
 
 module.exports = function(amount, ttl, options){
