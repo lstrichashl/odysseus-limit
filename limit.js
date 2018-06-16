@@ -1,4 +1,5 @@
 var TooManyRequestsError = require('./errors/TooManyRequestsError');
+var LocalStore = require('./store/LocalStore');
 
 function middleware(req, res, next){
     var that = this,
@@ -61,25 +62,25 @@ function setField(field){
     return newField;
 }
 
+function setStore(store){
+    if(!store){
+        return new LocalStore();
+    }
+    return store;
+}
+
 function initParams(options){
     var p = {
         key: setKey(options.key),
         amount: setField(options.amount),
-        ttl: setField(options.ttl)
+        ttl: setField(options.ttl),
+        store: setStore(options.store)
     };
-    Object.assign(p, options);
-    return p;
+    Object.assign(options, p);
+    return options;
 }
 
-module.exports = function(amount, ttl, options){
-    var params = {};
-    if(typeof amount == "object"){
-        params = initParams(amount);
-    }
-    else{
-        options.amount = amount;
-        options.ttl = ttl;
-        params = initParams(options);
-    }
+module.exports = function(options){
+    params = initParams(options);
     return middleware.bind(params);
 };
