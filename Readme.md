@@ -14,18 +14,22 @@ $ npm install odysseus-limit
 
 ## Examples
 
-If exceed 100 requests in 10 second were sent, it will not proceed to next():
+In the example below, after exceed 100 requests in 10 seconds, it will not proceed to next().
+Each requests have time to live of 10 seconds. So, after 10 seconds from the first request, the limiter will proceed to next():
 ```js
-var OdysseusLimiter = require('odysseus-limit');
+let OdysseusLimiter = require('odysseus-limit');
 
-app.use(OdysseusLimiter.limit({amount: 100, ttl: 10000});
+app.use(OdysseusLimiter.limit({amount: 100, ttl: 10000},
+    (req, res, next) => {
+        res.status(200).send('hello world');
+    });
 ```
 
-You can block requests by key. Meaning that if the same key where exceed the rate specified, all the request form that key will be blocked. For example, by username:
+You can block requests by key. Meaning that if requests with same key where exceed the rate specified, all next requests form the same key will be blocked (until ttl of some request will expire). For example:
 ```js
-var OdysseusLimiter = require('odysseus-limit');
-var options = {
-    key: function (req) { // req = requet express object
+let OdysseusLimiter = require('odysseus-limit');
+let options = {
+    key: (req) => { // req = requet express object
         return req.body.username;
     },
     amount: 100,
@@ -36,9 +40,11 @@ app.use(OdysseusLimiter.limit(options);
 
 And here you can block by IP:
 ```js
-var OdysseusLimiter = require('odysseus-limit');
-var options = {
-    key: "ip",
+let OdysseusLimiter = require('odysseus-limit');
+let options = {
+    key: (req) => {
+        return req.connection.remoteAddress;
+    },
     amount: 100,
     ttl: 10000
 };
@@ -47,8 +53,8 @@ app.use(OdysseusLimiter.limit(options);
 
 Manage requets in redis for higher scalability:
 ```js
-var OdysseusLimiter = require('odysseus-limit');
-var options = {
+let OdysseusLimiter = require('odysseus-limit');
+let options = {
     store: new OdysseusLimiter.RedisStore({
         host: 'localhost',
         port: 6379
@@ -80,26 +86,28 @@ app.use(OdysseusLimiter.limit(options);
 
 ## More Complex Example
 ```js
-var OdysseusLimiter = require('odysseus-limit');
-var store = new OdysseusLimiter.RedisStore({
+let OdysseusLimiter = require('odysseus-limit');
+let store = new OdysseusLimiter.RedisStore({
     host: 'localhost',
     port: 6379
 });
-var options = {
+let options = {
     store: store,
-    key: function (req) {
+    key: (req) => {
         return req.body.username;
     },
-    amount: 100,
-    ttl: function (req) {
-        return req.body.ttl;
+    amount: (req) => {
+        return req.body.isAdmin ? 1000 : 50;
+    },
+    ttl: (req) => {
+        return req.body.isAdmin ? 10 : 10000;
     }
 };
 app.use(OdysseusLimiter.limit(options),
-    function(req,res,next){
+    (req, res, next) => {
         res.status(200).send('Do\'h');
     });
-app.listen(9638, function(){
+app.listen(9638, () => {
     console.log('Start listening to port 9638');
 });
 ```

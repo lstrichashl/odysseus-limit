@@ -34,12 +34,7 @@ function setKey(key){
         key = constParam("general")
     }
     else{
-        if(key === "ip"){
-            key = function(req){
-                return req.connection.remoteAddress;
-            }
-        }
-        else if(typeof key === 'string'){
+        if(typeof key === 'string'){
             key = constParam(key);
         }
     }
