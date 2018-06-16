@@ -5,40 +5,78 @@
   [![Test Coverage][coveralls-image]][coveralls-url]
 
 Throttle limiting requests middleware for express apps.
-Backed by redis for maintainable and scalable apps.
-
-## Example
-```js
-var OdysseusLimiter = require('odysseus-limit');
-
-var store = new OdysseusLimiter.RedisStore({
-    host: localhost,
-    port: 6793
-});
-
-app.use(OdysseusLimiter.limit({store: store});
-```
+Can be backed by redis for maintainable and scalable apps.
 
 ## Installation
 ```bash
 $ npm install odysseus-limit
 ```
 
+## Examples
+
+If exceed 100 requests in 10 second were sent, it will not proceed to next():
+```js
+var OdysseusLimiter = require('odysseus-limit');
+
+app.use(OdysseusLimiter.limit(100, 10000);
+```
+
+You can block requests by key. Meaning that if the same key where exceed the rate specified, all the request form that key will be blocked. For example, by username:
+```js
+var OdysseusLimiter = require('odysseus-limit');
+var options = {
+    key: function (req) { // req = requet express object
+        return req.body.username;
+    },
+    amount: 100,
+    ttl: 10000
+};
+app.use(OdysseusLimiter.limit(options);
+```
+
+And here you can block by IP:
+```js
+var OdysseusLimiter = require('odysseus-limit');
+var options = {
+    key: "ip",
+    amount: 100,
+    ttl: 10000
+};
+app.use(OdysseusLimiter.limit(options);
+```
+
+Manage requets in redis for higher scalability:
+```js
+var OdysseusLimiter = require('odysseus-limit');
+var options = {
+    store: new OdysseusLimiter.RedisStore({
+        host: 'localhost',
+        port: 6379
+    });
+    amount: 100,
+    ttl: 10000
+};
+app.use(OdysseusLimiter.limit(options);
+```
+
 ## Classes
-* ``Store`` - interface that expose two functions:
-    * addRequest - gets ``key`` and ``ttl``(time to live) in milliseconds. After the ttl expires the request is deleted
-    * getRequestCount - gets all requests by key.
-* ``RedisStore`` - implementation of ``Store``. The requests are save in redis. Redis is menaging the ttl issue.
-    * gets options in constructor:
+* ``LocalStore`` - The requests save in memory.
+* ``RedisStore`` - implementation of ``Store``. The requests are save in redis.
+    * options:
         * ``host`` - host of redis
         * ``port`` - port of redis
         * ``client`` - predefined redis client
 * ``limit`` - An express middleware that limits requests.
-    * options
-        * ``store`` - instance of ``store``
-        * ``key`` - function that gets express request, returns the request key.
-        * ``amount`` - function that gets express request, returns the block limit for the specific key
-        * ``ttl`` - function that gets express request, returns the ttl of the request.
+
+### limit middleware options:
+
+| Property  | Default   | Description |
+|-----------|-----------|-------------|
+| amount      | no default | as noted above |
+| ttl      | no default | as noted above |
+| store      | ``LocalStore`` | where the requests are managed |
+| key      | 'general' | give each request a key and throttle by that key |
+
 
 ## More Complex Example
 ```js
@@ -50,13 +88,11 @@ var store = new OdysseusLimiter.RedisStore({
 var options = {
     store: store,
     key: function (req) {
-        return req.query.key;
+        return req.body.username;
     },
-    amount: function(req){
-        return 4;
-    },
+    amount: 100,
     ttl: function (req) {
-        return 1000000;
+        return req.body.ttl;
     }
 };
 app.use(OdysseusLimiter.limit(options),
