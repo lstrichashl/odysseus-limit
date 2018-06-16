@@ -18,7 +18,7 @@ If exceed 100 requests in 10 second were sent, it will not proceed to next():
 ```js
 var OdysseusLimiter = require('odysseus-limit');
 
-app.use(OdysseusLimiter.limit(100, 10000);
+app.use(OdysseusLimiter.limit({amount: 100, ttl: 10000});
 ```
 
 You can block requests by key. Meaning that if the same key where exceed the rate specified, all the request form that key will be blocked. For example, by username:
