@@ -30,22 +30,21 @@ function constParam(constant){
 }
 
 function setKey(key){
-    var newkey;
     if(!key){
-        newkey = constParam("general")
+        key = constParam("general")
     }
     else{
         if(key === "ip"){
-            newkey = function(req){
+            key = function(req){
                 return req.connection.remoteAddress;
             }
         }
         else if(typeof key === 'string'){
-            newkey = constParam(key);
+            key = constParam(key);
         }
     }
 
-    return newkey;
+    return key;
 }
 
 function setField(field){
