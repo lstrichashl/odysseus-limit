@@ -3,6 +3,7 @@ var util = require('util');
 
 function RedisStore(options){
     var that = this;
+    options = options || {};
     if(options.client){
         this.client = options.client;
     } else {
