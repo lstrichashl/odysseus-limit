@@ -7,7 +7,7 @@ function LocalStore(){
 util.inherits(LocalStore, require('./Store'));
 
 LocalStore.prototype.getRequestCount = function(key, onSucceed, onFailed){
-    onSucceed(this.queues[key] ? this.queues[key].length : 0);
+    if(onSucceed) onSucceed(this.queues[key] ? this.queues[key].length : 0);
 }
 
 LocalStore.prototype.addRequest = function(request, onSucceed, onFailed){
@@ -17,7 +17,7 @@ LocalStore.prototype.addRequest = function(request, onSucceed, onFailed){
     setTimeout(() => {
         thisQueue[request.key].pop();
     }, request.ttl);
-    onSucceed('ok');
+    if(onSucceed) onSucceed('ok');
 }
 
 module.exports = LocalStore;
