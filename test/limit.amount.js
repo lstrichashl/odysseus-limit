@@ -62,7 +62,7 @@ describe('limit', function(){
                     OdysseusLimiter.limit(options);
                 }
                 catch(e){
-                    if(e == "amount must be specified"){
+                    if(e == "field must be specified"){
                         done();
                     }
                 }
