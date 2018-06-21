@@ -1,10 +1,8 @@
-'use strict';
 var OdysseusLimiter = require('../index');
 var RedisStoreMock = require('./RedisStoreMock');
 var redis = require('redis-mock');
 var chai = require('chai');
 
-chai.should();
 var assert = chai.assert;
 
 describe('store', function(){
@@ -19,7 +17,7 @@ describe('store', function(){
         });
         it('should emit ready when connected', function(done){
             redis_client = redis.createClient();
-            var mystore = new RedisStoreMock
+            var mystore = new RedisStoreMock();
             mystore.once('ready', function (error) {
                 done();
             });

@@ -3,7 +3,6 @@ var RedisStoreMock = require('./RedisStoreMock');
 var chai = require('chai');
 
 chai.should();
-var assert = chai.assert;
 
 [OdysseusLimiter.LocalStore, RedisStoreMock].forEach(function(Store){
     describe('store - ' + Store.name, function() {

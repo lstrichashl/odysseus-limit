@@ -7,19 +7,6 @@ function RedisStore(options){
     if(options.client){
         this.client = options.client;
     } else {
-        options.retry_strategy = function (options) {
-            if (options.error.code = 'ECONNREFUSED') {
-                return new Error('The server refused the connection');
-            }
-            if (options.total_retry_time > 5000) {
-                return new Error('Retry time exhausted');
-            }
-            if (options.time_connected > 10) {
-                return undefined;
-            }
-            return Math.max(options.attempt * 100, 5000);
-
-        };
         this.client = redis.createClient(options);
     }
     this.client.on('error', function(error){

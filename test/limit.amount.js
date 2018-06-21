@@ -1,8 +1,6 @@
 var express = require('express');
 var request = require('supertest');
-var redis = require('redis-mock');
 var OdysseusLimiter = require('../index');
-var assert = require('assert');
 
 describe('limit', function(){
     var store, app;
